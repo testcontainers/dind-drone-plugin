@@ -5,7 +5,7 @@ set -euo pipefail # Abort on error, strict variable interpolation, fail if piped
 echo "📦 Starting dind-drone-plugin"
 
 echo "🐳 Starting docker-in-docker daemon"
-/usr/local/bin/dockerd-entrypoint.sh dockerd --data-root /drone/docker -s overlay2 --log-level error &
+/usr/local/bin/dockerd-entrypoint.sh dockerd --data-root /drone/docker -s overlay --log-level error &
 
 for i in $(seq 1 30); do
   echo "⏳ Pinging docker daemon ($i/30)"
