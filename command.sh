@@ -29,8 +29,10 @@ cd ${CI_WORKSPACE}
 echo "🚚 Pulling build image: ${PLUGIN_BUILD_IMAGE}"
 docker pull ${PLUGIN_BUILD_IMAGE} 2>&1 | sed 's/^/   /g'
 
-# Ensure that secrets (passed through as env vars) are available
-env > ${PWD}/outer_env_vars.env
+# Ensure that secrets (passed through as env vars) are available. Iterate and purposefully omit newlines.
+for k in $(compgen -e); do
+  echo $k=${!k} >> outer_env_vars.env
+done
 
 echo -e "\n\n"
 MSG="🚀 About to run command: ${PLUGIN_CMD} on image ${PLUGIN_BUILD_IMAGE} inside Docker-in-Docker"
