@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 set -euo pipefail # Abort on error, strict variable interpolation, fail if piped command fails
 
@@ -31,7 +31,7 @@ docker pull ${PLUGIN_BUILD_IMAGE} 2>&1 | sed 's/^/   /g'
 
 # Ensure that secrets (passed through as env vars) are available. Iterate and purposefully omit newlines.
 for k in $(compgen -e); do
-  echo $k=${!k} >> outer_env_vars.env
+  echo $k=${!k} >> ${PWD}/outer_env_vars.env
 done
 
 echo -e "\n\n"
