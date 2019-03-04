@@ -10,6 +10,7 @@ This plugin:
 	* Starts a nested docker daemon
 	* Optionally starts a pull of required images (in parallel with your build, so as to reduce overall time spent waiting for images to be pulled)
 	* Starts a specified build container inside the Docker-in-Docker context, containing your source code and with a docker socket available to it
+	* Stores/restores image layers within the CI workspace, for best efforts caching. Even when cached, images will still be pulled to enforce up-to-date checks.
 
 ## Prerequisites
 
@@ -37,7 +38,7 @@ pipeline:
 
 When migrating to use this plugin from an ordinary build step, note that:
 
-* `commands` should be changed to `cmd` (currently only accepting a single entry)
+* `commands` should be changed to `cmd`. Note that _commas_ are not supported within `cmd` lines due to the way these are passed in between Drone and this plugin.
 * `image` should be changed to `build_image`
 * `prefetch_images` is optional, but recommended. This specifies a list of images that should be pulled in parallel with your build process, thus saving some time.
 
@@ -45,4 +46,4 @@ When migrating to use this plugin from an ordinary build step, note that:
 
 This repository contains code which was mainly developed at [Skyscanner](https://www.skyscanner.net/jobs/), and is licenced under the [Apache 2.0 Licence](LICENSE).
 
-(c) 2017-2018 Skyscanner Ltd.
+(c) 2017-2019 Skyscanner Ltd.
