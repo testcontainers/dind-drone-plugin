@@ -78,7 +78,9 @@ echo $CMD
 echo -e "\n\n"
 set +e
 eval $CMD
-EXIT_CODE=$!
+CMD_EXIT_CODE=$?
+echo; echo
+echo "🏁 Exit code: $CMD_EXIT_CODE"
 
 mkdir -p $IMAGE_CACHE_DIR
 docker image prune -f
@@ -89,4 +91,4 @@ for IMAGE in $(docker image ls -q); do
   fi
 done
 
-exit $EXIT_CODE
+exit $CMD_EXIT_CODE
