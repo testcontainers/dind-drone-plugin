@@ -17,7 +17,12 @@ export PLUGIN_CMD="sh -c '${PLUGIN_CMD}'"
 echo "📦 Starting dind-drone-plugin"
 
 echo "🐳 Starting docker-in-docker daemon"
-/usr/local/bin/dockerd-entrypoint.sh dockerd --data-root /drone/docker -s ${PLUGIN_STORAGE_DRIVER:-vfs} --log-level error &
+/usr/local/bin/dockerd-entrypoint.sh dockerd \
+  --data-root /drone/docker \
+  -s ${PLUGIN_STORAGE_DRIVER:-vfs} \
+  --log-level error \
+  -H tcp://0.0.0.0:2375 \
+  -H unix:///var/run/docker.sock &
 
 for i in $(seq 1 30); do
   echo "⏳ Pinging docker daemon ($i/30)"
@@ -60,6 +65,15 @@ docker pull ${PLUGIN_BUILD_IMAGE} 2>&1 | sed 's/^/   /g'
 for k in $(compgen -e); do
   echo $k=${!k} >> ${PWD}/outer_env_vars.env
 done
+
+# Determine IP address at which dockerd and spawned containers can be reached
+DOCKER_IP=$(ip route | awk '/docker0/ { print $7 }')
+echo "DOCKER_HOST=tcp://${DOCKER_IP}:2375" >> ${PWD}/outer_env_vars.env
+echo "ℹ️  Docker daemon will be available in the build container:"
+echo "     at /var/run/docker.sock"
+echo "     at tcp://${DOCKER_IP}:2375 (no TLS)"
+echo "ℹ️  DOCKER_HOST will be set to tcp://${DOCKER_IP}:2375"
+echo "ℹ️  Containers spawned by the build container will be accessible at ${DOCKER_IP} (do not hardcode this value)"
 
 echo -e "\n\n"
 MSG="🚀 About to run command: ${PLUGIN_CMD} on image ${PLUGIN_BUILD_IMAGE} inside Docker-in-Docker"
