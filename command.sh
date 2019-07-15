@@ -96,6 +96,8 @@ CMD_EXIT_CODE=$?
 echo; echo
 echo "🏁 Exit code: $CMD_EXIT_CODE"
 
+rm outer_env_vars.env
+
 mkdir -p $IMAGE_CACHE_DIR
 docker image prune -f
 echo "💾 Exporting docker images to cache ($IMAGE_CACHE_DIR)"
