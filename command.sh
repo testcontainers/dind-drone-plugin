@@ -19,7 +19,7 @@ echo "📦 Starting dind-drone-plugin"
 echo "🐳 Starting docker-in-docker daemon"
 /usr/local/bin/dockerd-entrypoint.sh dockerd \
   --data-root /drone/docker \
-  -s ${PLUGIN_STORAGE_DRIVER:-vfs} \
+  -s ${PLUGIN_STORAGE_DRIVER:-overlay2} \
   --log-level error \
   -H tcp://0.0.0.0:2375 \
   -H unix:///var/run/docker.sock &
