@@ -1,7 +1,6 @@
 #!/bin/bash
 
 set -euo pipefail # Abort on error, strict variable interpolation, fail if piped command fails
-IMAGE_CACHE_DIR=${CI_WORKSPACE}/.dind
 
 if [[ "${PLUGIN_CMD:-}" == "" ]]; then
   echo "One or more cmd arguments must be provided"
@@ -32,16 +31,6 @@ done
 
 docker ps &> /dev/null || exit 1
 echo "✅ Docker-in-Docker is running..."
-
-set +e
-if [[ -d $IMAGE_CACHE_DIR ]]; then
-  echo "💾 Importing docker images from cache ($IMAGE_CACHE_DIR)"
-  for IMAGE in $(ls $IMAGE_CACHE_DIR); do
-    cat $IMAGE_CACHE_DIR/$IMAGE | gunzip | docker image load
-  done
-fi
-set -e
-
 
 if [[ "${PLUGIN_DOCKER_LOGIN_COMMAND:-}" != "" ]]; then
   echo "🛠  Executing Docker login command"
@@ -97,14 +86,5 @@ echo; echo
 echo "🏁 Exit code: $CMD_EXIT_CODE"
 
 rm outer_env_vars.env
-
-mkdir -p $IMAGE_CACHE_DIR
-docker image prune -f
-echo "💾 Exporting docker images to cache ($IMAGE_CACHE_DIR)"
-for IMAGE in $(docker image ls -q); do
-  if [[ ! -f $IMAGE_CACHE_DIR/$IMAGE.tar.gz ]]; then
-    docker image save $IMAGE | gzip > $IMAGE_CACHE_DIR/$IMAGE.tar.gz
-  fi
-done
 
 exit $CMD_EXIT_CODE
