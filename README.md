@@ -10,7 +10,6 @@ This plugin:
 	* Starts a nested docker daemon
 	* Optionally starts a pull of required images (in parallel with your build, so as to reduce overall time spent waiting for images to be pulled)
 	* Starts a specified build container inside the Docker-in-Docker context, containing your source code and with a docker socket available to it
-	* Stores/restores image layers within the CI workspace, for best efforts caching. Even when cached, images will still be pulled to enforce up-to-date checks.
 
 ## Prerequisites
 
