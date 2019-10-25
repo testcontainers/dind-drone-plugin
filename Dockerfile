@@ -1,4 +1,4 @@
-FROM docker:18.09.0-dind
+FROM docker:19.03.0-dind
 
 RUN apk add --no-cache bash
 
