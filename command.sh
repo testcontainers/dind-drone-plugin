@@ -52,7 +52,15 @@ docker pull ${PLUGIN_BUILD_IMAGE} 2>&1 | sed 's/^/   /g'
 
 # Ensure that secrets (passed through as env vars) are available. Iterate and purposefully omit newlines.
 for k in $(compgen -e); do
-  echo $k=${!k} >> ${PWD}/outer_env_vars.env
+  touch ${PWD}/outer_env_vars.env
+  case "$k" in
+      # avoid overwriting container's variables
+      DIND_COMMIT|DOCKER_CHANNEL|DOCKER_TLS_CERTDIR|DOCKER_VERSION|HOME|HOSTNAME|PATH|PWD|SHLVL)
+      ;;
+    *)
+      echo $k=${!k} >> ${PWD}/outer_env_vars.env
+      ;;
+  esac
 done
 
 # Determine IP address at which dockerd and spawned containers can be reached
