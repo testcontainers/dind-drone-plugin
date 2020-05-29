@@ -54,11 +54,10 @@ docker pull ${PLUGIN_BUILD_IMAGE} 2>&1 | sed 's/^/   /g'
 for k in $(compgen -e); do
   touch ${PWD}/outer_env_vars.env
   case "$k" in
-      # avoid overwriting container's variables
-      
-# Note that the env vars to blacklist may be found using
-#   `docker run -it --entrypoint env quay.io/testcontainers/dind-drone-plugin`
-   DIND_COMMIT|DOCKER_CHANNEL|DOCKER_TLS_CERTDIR|DOCKER_VERSION|HOME|HOSTNAME|PATH|PWD|SHLVL)
+    # avoid overwriting container's variables
+    # Note that the env vars to blacklist may be found using
+    #   `docker run -it --entrypoint env quay.io/testcontainers/dind-drone-plugin`
+    DIND_COMMIT|DOCKER_CHANNEL|DOCKER_TLS_CERTDIR|DOCKER_VERSION|HOME|HOSTNAME|PATH|PWD|SHLVL)
       ;;
     *)
       echo $k=${!k} >> ${PWD}/outer_env_vars.env
