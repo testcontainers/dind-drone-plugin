@@ -37,12 +37,12 @@ pipeline:
       - "redis:4.0.6"
     # Not mandatory; sets up image name 'aliases' by pulling from one registry and tagging
     #  as a different name. Intended as a simplistic mechanism for using a private registry 
-    #  rather than Docker Hub for a known set of images. Accepts a list, with = separating
-    #  private registry image name from the Docker Hub image that it is a substitute for.
+    #  rather than Docker Hub for a known set of images. Accepts a dictionary of
+    #  private registry image name to the Docker Hub image that it is a substitute for.
     #  Note that all images are pulled synchronously before the build starts, so this is
     #  inefficient if any unnecessary images are listed.
     image_aliases:
-      - someregistry.com/redis:4.0.6=redis:4.0.6
+      someregistry.com/redis:4.0.6: redis:4.0.6
 ```
 
 When migrating to use this plugin from an ordinary build step, note that:

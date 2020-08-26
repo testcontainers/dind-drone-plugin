@@ -4,5 +4,5 @@ pipeline:
     build_image: alpine:fake
     cmd: cat /etc/issue
     image_aliases:
-      - alpine:3.5=alpine:fake
-      - alpine:3.6=alpine:fake2
+      alpine:3.5: alpine:fake
+      alpine:3.6: alpine:fake2

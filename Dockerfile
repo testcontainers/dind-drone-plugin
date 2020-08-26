@@ -1,6 +1,6 @@
 FROM docker:19.03.0-dind
 
-RUN apk add --no-cache bash
+RUN apk add --no-cache bash jq
 
 #### Script that starts docker in docker
 ADD command.sh /dind-drone-plugin/command.sh
