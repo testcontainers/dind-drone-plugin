@@ -28,11 +28,21 @@ pipeline:
   build:
     image: quay.io/testcontainers/dind-drone-plugin
     build_image: openjdk:8-jdk-alpine
-    # This specifies the command that should be executed to perform build, test and integration tests. Not to be confused with Drone's `command`:
+    # This specifies the command that should be executed to perform build, test and 
+    #  integration tests. Not to be confused with Drone's `command`:
     cmd: ./gradlew clean check --info
-    # Not mandatory, but enables pre-fetching of images in parallel with the build, so may save time:
+    # Not mandatory; enables pre-fetching of images in parallel with the build, so may save 
+    #  time:
     prefetch_images:
       - "redis:4.0.6"
+    # Not mandatory; sets up image name 'aliases' by pulling from one registry and tagging
+    #  as a different name. Intended as a simplistic mechanism for using a private registry 
+    #  rather than Docker Hub for a known set of images. Accepts a list, with = separating
+    #  private registry image name from the Docker Hub image that it is a substitute for.
+    #  Note that all images are pulled synchronously before the build starts, so this is
+    #  inefficient if any unnecessary images are listed.
+    image_aliases:
+      - someregistry.com/redis:4.0.6=redis:4.0.6
 ```
 
 When migrating to use this plugin from an ordinary build step, note that:
@@ -41,8 +51,16 @@ When migrating to use this plugin from an ordinary build step, note that:
 * `image` should be changed to `build_image`
 * `prefetch_images` is optional, but recommended. This specifies a list of images that should be pulled in parallel with your build process, thus saving some time.
 
+## Extending
+
+Users with custom requirements can build a new image using this as a base image.
+
+This image uses hook scripts, if present, to perform custom actions. Such scripts may be placed as executable files in any of `/dind-drone-plugin/hooks/{pre_daemon_start,post_daemon_start,pre_run,post_run}`, depending on which phase they are required to run in.
+
+Some initial hook scripts already exist, which should be overwritten or removed if needed.
+
 ## Copyright
 
 This repository contains code which was mainly developed at [Skyscanner](https://www.skyscanner.net/jobs/), and is licenced under the [Apache 2.0 Licence](LICENSE).
 
-(c) 2017-2019 Skyscanner Ltd.
+(c) 2017-2020 Skyscanner Ltd.

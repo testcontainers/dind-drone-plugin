@@ -2,6 +2,15 @@
 
 set -euo pipefail # Abort on error, strict variable interpolation, fail if piped command fails
 
+run_hook_scripts() {
+  for HOOK_SCRIPT in /dind-drone-plugin/hooks/$1/*; do
+    if [[ -x $HOOK_SCRIPT ]]; then
+      echo "📄 Running $1 hook script $HOOK_SCRIPT"
+      /bin/bash $HOOK_SCRIPT || exit 1
+    fi
+  done
+}
+
 if [[ "${PLUGIN_CMD:-}" == "" ]]; then
   echo "One or more cmd arguments must be provided"
   exit 1
@@ -12,6 +21,8 @@ export PLUGIN_CMD=${PLUGIN_CMD//,/ && }
 
 # Wrap command scriptlet in an invocation of sh
 export PLUGIN_CMD="sh -c '${PLUGIN_CMD}'"
+
+run_hook_scripts pre_daemon_start
 
 echo "📦 Starting dind-drone-plugin"
 
@@ -32,23 +43,12 @@ done
 docker ps &> /dev/null || exit 1
 echo "✅ Docker-in-Docker is running..."
 
-if [[ "${PLUGIN_DOCKER_LOGIN_COMMAND:-}" != "" ]]; then
-  echo "🛠  Executing Docker login command"
-  sh -c "${PLUGIN_DOCKER_LOGIN_COMMAND}" 2>&1 | sed "s/^/    /g"
-fi
+run_hook_scripts post_daemon_start
 
-if [[ "${PLUGIN_PREFETCH_IMAGES:-}" != "" ]]; then
-  echo "🚚 Prefetching images in background:"
-  for IMG in $(echo ${PLUGIN_PREFETCH_IMAGES} | sed "s/,/ /g"); do
-    echo "   $IMG"
-    $(docker pull "$IMG" > /dev/null) &
-  done
-fi
+echo "   Available images before build:"
+docker image ls 2>&1 | sed 's/^/   /g'
 
 cd ${CI_WORKSPACE}
-
-echo "🚚 Pulling build image: ${PLUGIN_BUILD_IMAGE}"
-docker pull ${PLUGIN_BUILD_IMAGE} 2>&1 | sed 's/^/   /g'
 
 # Ensure that secrets (passed through as env vars) are available. Iterate and purposefully omit newlines.
 for k in $(compgen -e); do
@@ -65,6 +65,9 @@ echo "ℹ️  DOCKER_HOST will be set to tcp://${DOCKER_IP}:2375"
 echo "ℹ️  Containers spawned by the build container will be accessible at ${DOCKER_IP} (do not hardcode this value)"
 
 echo -e "\n\n"
+
+run_hook_scripts pre_run
+
 MSG="🚀 About to run command: ${PLUGIN_CMD} on image ${PLUGIN_BUILD_IMAGE} inside Docker-in-Docker"
 echo -e $MSG
 echo -n " $MSG" | sed 's/./=/g'
@@ -84,6 +87,8 @@ eval $CMD
 CMD_EXIT_CODE=$?
 echo; echo
 echo "🏁 Exit code: $CMD_EXIT_CODE"
+
+run_hook_scripts post_run
 
 rm outer_env_vars.env
 
