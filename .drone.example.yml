@@ -1,5 +1,8 @@
 pipeline:
   build:
     image: quay.io/testcontainers/dind-drone-plugin
-    build_image: openjdk:8-jdk
-    cmd: java -v
+    build_image: alpine:fake
+    cmd: cat /etc/issue
+    image_aliases:
+      alpine:3.5: alpine:fake
+      alpine:3.6: alpine:fake2
