@@ -6,7 +6,7 @@ run_hook_scripts() {
   for HOOK_SCRIPT in /dind-drone-plugin/hooks/$1/*; do
     if [[ -x $HOOK_SCRIPT ]]; then
       echo "📄 Running $1 hook script $HOOK_SCRIPT"
-      /bin/bash $HOOK_SCRIPT || exit 1
+      $HOOK_SCRIPT || exit 1
     fi
   done
 }
