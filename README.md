@@ -23,26 +23,45 @@ Either:
 Modify the `build` step of the pipeline to resemble:
 
 ```yaml
-pipeline:
-  ...
-  build:
+steps:
+  - name: build
     image: quay.io/testcontainers/dind-drone-plugin
-    build_image: openjdk:8-jdk-alpine
-    # This specifies the command that should be executed to perform build, test and 
-    #  integration tests. Not to be confused with Drone's `command`:
-    cmd: ./gradlew clean check --info
-    # Not mandatory; enables pre-fetching of images in parallel with the build, so may save 
-    #  time:
-    prefetch_images:
-      - "redis:4.0.6"
-    # Not mandatory; sets up image name 'aliases' by pulling from one registry and tagging
-    #  as a different name. Intended as a simplistic mechanism for using a private registry 
-    #  rather than Docker Hub for a known set of images. Accepts a dictionary of
-    #  private registry image name to the Docker Hub image that it is a substitute for.
-    #  Note that all images are pulled synchronously before the build starts, so this is
-    #  inefficient if any unnecessary images are listed.
-    image_aliases:
-      someregistry.com/redis:4.0.6: redis:4.0.6
+    environment:
+      CI_WORKSPACE: "/drone/src"
+    settings:
+      # This specifies the command that should be executed to perform build, test and
+      #  integration tests. Not to be confused with Drone's `command`:
+      cmd: sleep 5 && ./gradlew clean check --info
+      # This image will run the cmd with your build steps
+      build_image: adoptopenjdk:14-openj9
+      # Not mandatory; enables pre-fetching of images in parallel with the build, so may save 
+      #  time:
+      prefetch_images:
+        - "redis:4.0.6"
+      # Not mandatory; sets up image name 'aliases' by pulling from one registry and tagging
+      #  as a different name. Intended as a simplistic mechanism for using a private registry 
+      #  rather than Docker Hub for a known set of images. Accepts a dictionary of
+      #  private registry image name to the Docker Hub image that it is a substitute for.
+      #  Note that all images are pulled synchronously before the build starts, so this is
+      #  inefficient if any unnecessary images are listed.
+      image_aliases:
+        someregistry.com/redis:4.0.6: redis:4.0.6
+      volumes:
+        - name: dockersock
+          path: /var/run
+
+# Specify docker:dind as a service
+services:
+- name: docker
+  image: docker:dind
+  privileged: true
+  volumes:
+  - name: dockersock
+    path: /var/run
+
+volumes:
+- name: dockersock
+  temp: {}
 ```
 
 When migrating to use this plugin from an ordinary build step, note that:
