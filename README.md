@@ -1,6 +1,6 @@
 # Docker-in-Docker Drone plugin
 
-This is a plugin for **Drone 0.8** that is aimed mainly at enabling [Testcontainers](https://www.testcontainers.org) to be used during CI build/test steps. 
+This is a plugin for Drone that is aimed mainly at enabling [Testcontainers](https://www.testcontainers.org) to be used during CI build/test steps. 
 Due to Drone's architecture, Docker-in-Docker is often the most practical way to run builds that require a Docker daemon.
 
 This plugin:
@@ -15,8 +15,8 @@ This plugin:
 
 Either:
 
-* (Drone 0.8): To enable on a per-repository basis, enable the *Trusted* setting for the repository. *Or*
-* (Drone 0.8): To enable this plugin globally in your Drone instance, add the image name to the `DRONE_ESCALATE` environment variable that the Drone process runs under.
+* (Drone >= 0.8): To enable on a per-repository basis, enable the *Trusted* setting for the repository. *Or*
+* (Drone >= 0.8): To enable this plugin globally in your Drone instance, add the image name to the `DRONE_ESCALATE` environment variable that the Drone process runs under.
 
 ## Usage/Migration (Drone 0.8)
 
