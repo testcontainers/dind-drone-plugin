@@ -45,7 +45,7 @@ pipeline:
       someregistry.com/redis:4.0.6: redis:4.0.6
 ```
 
-### Usage newer drone versions
+### Usage with newer drone versions
 
 Modify steps of the pipeline to resemble:
 
