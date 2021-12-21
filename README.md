@@ -73,9 +73,9 @@ steps:
       #  inefficient if any unnecessary images are listed.
       image_aliases:
         someregistry.com/redis:4.0.6: redis:4.0.6
-      volumes:
-        - name: dockersock
-          path: /var/run
+    volumes:
+      - name: dockersock
+        path: /var/run
 
 # Specify docker:dind as a service
 services:
