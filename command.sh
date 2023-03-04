@@ -31,6 +31,7 @@ echo "🐳 Starting docker-in-docker daemon"
   --data-root /drone/docker \
   -s ${PLUGIN_STORAGE_DRIVER:-overlay2} \
   --log-level error \
+  ${EXTRA_DOCKERD_OPTIONS:-} \
   -H tcp://0.0.0.0:2375 \
   -H unix:///var/run/docker.sock &
 
