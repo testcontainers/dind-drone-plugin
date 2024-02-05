@@ -17,7 +17,7 @@ if [[ "${PLUGIN_CMD:-}" == "" ]]; then
 fi
 # If multiple cmd lines have been provided, chain them into something which we can execute with sh
 # Note that Drone provides these lines in comma separated form without escaping, which means commas in commands are known to break
-export PLUGIN_CMD=${PLUGIN_CMD//,/ && }
+export PLUGIN_CMD=${PLUGIN_CMD//,/ \&\& }
 
 # Wrap command scriptlet in an invocation of sh
 export PLUGIN_CMD="sh -c '${PLUGIN_CMD}'"
