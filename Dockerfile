@@ -1,4 +1,4 @@
-FROM docker:20.10.16-dind
+FROM docker:25.0.2-dind
 
 RUN apk add --no-cache bash jq
 
