@@ -1,3 +1,5 @@
+# Archived - please see https://github.com/testcontainers/dind-drone-plugin/issues/32
+
 # Docker-in-Docker Drone plugin
 
 This is a plugin for Drone that is aimed mainly at enabling [Testcontainers](https://www.testcontainers.org) to be used during CI build/test steps. 
