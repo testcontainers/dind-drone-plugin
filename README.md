@@ -1,4 +1,4 @@
-# Archived - please see https://github.com/testcontainers/dind-drone-plugin/issues/32
+> # 🚨 Archived - please see [Future of dind-drone-plugin](https://github.com/testcontainers/dind-drone-plugin/issues/32)
 
 # Docker-in-Docker Drone plugin
 
